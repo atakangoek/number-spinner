@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Number Spinner (1-43)</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f4f8;
+            color: #333;
+        }
+
+        .spinner-container {
+            text-align: center;
+            background: white;
+            padding: 50px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            margin-bottom: 30px;
+            font-size: 1.5rem;
+            color: #555;
+        }
+
+        #number-display {
+            font-size: 100px;
+            font-weight: bold;
+            width: 180px;
+            height: 180px;
+            line-height: 180px;
+            margin: 0 auto 30px;
+            background: #1e293b;
+            color: #38bdf8;
+            border-radius: 20px;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.5);
+            /* This gives a slight blur effect when spinning */
+            transition: text-shadow 0.1s; 
+        }
+
+        .spinning {
+            text-shadow: 0 5px 10px rgba(56, 189, 248, 0.5);
+        }
+
+        button {
+            padding: 15px 40px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Stop button styles */
+        .stop-btn {
+            background-color: #ef4444;
+            color: white;
+            box-shadow: 0 4px 0 #b91c1c;
+        }
+
+        .stop-btn:hover {
+            background-color: #dc2626;
+        }
+
+        .stop-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 #b91c1c;
+        }
+
+        /* Start button styles */
+        .start-btn {
+            background-color: #10b981;
+            color: white;
+            box-shadow: 0 4px 0 #047857;
+        }
+
+        .start-btn:hover {
+            background-color: #059669;
+        }
+
+        .start-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 #047857;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="spinner-container">
+        <h1>Random Number Picker</h1>
+        <div id="number-display" class="spinning">1</div>
+        <button id="action-btn" class="stop-btn">Stop Spin</button>
+    </div>
+
+    <script>
+        const display = document.getElementById('number-display');
+        const btn = document.getElementById('action-btn');
+        
+        let isSpinning = true;
+        let spinInterval;
+        let currentNumber = 1;
+
+        // Function to handle the spinning logic
+        function startSpin() {
+            isSpinning = true;
+            display.classList.add('spinning');
+            
+            // Change button to "Stop"
+            btn.textContent = 'Stop Spin';
+            btn.className = 'stop-btn';
+
+            // Cycle through numbers rapidly (every 30 milliseconds)
+            spinInterval = setInterval(() => {
+                currentNumber++;
+                if (currentNumber > 43) {
+                    currentNumber = 1;
+                }
+                display.textContent = currentNumber;
+            }, 30);
+        }
+
+        // Function to handle the stopping logic
+        function stopSpin() {
+            isSpinning = false;
+            clearInterval(spinInterval);
+            display.classList.remove('spinning');
+            
+            // Pick a final random number between 1 and 43 to ensure true randomness
+            const finalNumber = Math.floor(Math.random() * 43) + 1;
+            display.textContent = finalNumber;
+
+            // Change button to "Start"
+            btn.textContent = 'Spin Again';
+            btn.className = 'start-btn';
+        }
+
+        // Listen for button clicks
+        btn.addEventListener('click', () => {
+            if (isSpinning) {
+                stopSpin();
+            } else {
+                startSpin();
+            }
+        });
+
+        // Start the spin automatically when the page loads
+        startSpin();
+    </script>
+</body>
+</html>
