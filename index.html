@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Number Spinner (1-43)</title>
+    <title>Number Spinner & Stopwatch</title>
     <style>
         * {
             box-sizing: border-box;
@@ -27,12 +27,27 @@
             padding: 50px;
             border-radius: 16px;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            min-width: 350px;
         }
 
         h1 {
-            margin-bottom: 30px;
+            margin-bottom: 10px;
             font-size: 1.5rem;
             color: #555;
+        }
+
+        /* Stopwatch Styles */
+        #stopwatch {
+            font-size: 1.5rem;
+            font-family: 'Courier New', Courier, monospace;
+            color: #64748b;
+            margin-bottom: 30px;
+            font-weight: 600;
+            background: #f1f5f9;
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 8px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
         }
 
         #number-display {
@@ -46,7 +61,6 @@
             color: #38bdf8;
             border-radius: 20px;
             box-shadow: inset 0 0 15px rgba(0,0,0,0.5);
-            /* This gives a slight blur effect when spinning */
             transition: text-shadow 0.1s; 
         }
 
@@ -64,6 +78,7 @@
             transition: all 0.2s ease;
             text-transform: uppercase;
             letter-spacing: 1px;
+            width: 100%;
         }
 
         /* Stop button styles */
@@ -103,6 +118,8 @@
 
     <div class="spinner-container">
         <h1>Random Number Picker</h1>
+        <div id="stopwatch">00:00.00</div>
+        
         <div id="number-display" class="spinning">1</div>
         <button id="action-btn" class="stop-btn">Stop Spin</button>
     </div>
@@ -110,10 +127,37 @@
     <script>
         const display = document.getElementById('number-display');
         const btn = document.getElementById('action-btn');
+        const stopwatchDisplay = document.getElementById('stopwatch');
         
         let isSpinning = true;
         let spinInterval;
         let currentNumber = 1;
+
+        // Stopwatch variables
+        let startTime;
+        let timerInterval;
+
+        // Formats the time into MM:SS.ms
+        function formatTime(milliseconds) {
+            const date = new Date(milliseconds);
+            const m = date.getUTCMinutes().toString().padStart(2, '0');
+            const s = date.getUTCSeconds().toString().padStart(2, '0');
+            const ms = Math.floor(date.getUTCMilliseconds() / 10).toString().padStart(2, '0');
+            return `${m}:${s}.${ms}`;
+        }
+
+        function startTimer() {
+            startTime = Date.now();
+            timerInterval = setInterval(() => {
+                const elapsedTime = Date.now() - startTime;
+                stopwatchDisplay.textContent = formatTime(elapsedTime);
+            }, 10); // Updates every 10 milliseconds for a smooth effect
+        }
+
+        function stopAndResetTimer() {
+            clearInterval(timerInterval);
+            stopwatchDisplay.textContent = "00:00.00";
+        }
 
         // Function to handle the spinning logic
         function startSpin() {
@@ -123,6 +167,9 @@
             // Change button to "Stop"
             btn.textContent = 'Stop Spin';
             btn.className = 'stop-btn';
+
+            // Start the stopwatch
+            startTimer();
 
             // Cycle through numbers rapidly (every 30 milliseconds)
             spinInterval = setInterval(() => {
@@ -140,9 +187,12 @@
             clearInterval(spinInterval);
             display.classList.remove('spinning');
             
-            // Pick a final random number between 1 and 43 to ensure true randomness
+            // Pick a final random number between 1 and 43
             const finalNumber = Math.floor(Math.random() * 43) + 1;
             display.textContent = finalNumber;
+
+            // Stop and reset the stopwatch
+            stopAndResetTimer();
 
             // Change button to "Start"
             btn.textContent = 'Spin Again';
@@ -158,7 +208,7 @@
             }
         });
 
-        // Start the spin automatically when the page loads
+        // Start everything automatically when the page loads
         startSpin();
     </script>
 </body>
